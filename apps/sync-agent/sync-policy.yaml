@@ -1,0 +1,38 @@
+# CyberMe Sync Policy — 同步策略配置
+# 此文件定义哪些 Vault 内容可以上传到云端
+
+include:
+  - "01_Home/**/*.md"
+  - "10_Self/**/*.md"
+  - "20_University/**/*.md"
+  - "30_Projects/**/*.md"
+  - "40_Research/**/*.md"
+  - "50_Outputs/**/*.md"
+  - "60_Daily/**/*.md"
+  - "70_Evaluation/**/*.md"
+  - "80_Templates/**/*.md"
+  - "99_Archive/**/*.md"
+  - "00_Inbox/**/*.md"
+
+exclude:
+  - "91_Raw-Archive/**"
+  - "**/.git/**"
+  - "**/.obsidian/**"
+  - "**/node_modules/**"
+  - "**/.venv/**"
+  - "**/__pycache__/**"
+
+# 文件大小限制 (MB)
+max_file_size_mb: 10
+
+# 附件白名单（扩展名），空列表表示不上传任何附件
+allowed_attachment_extensions: []
+
+# 敏感路径模式（这些文件即使匹配 include 也不会同步）
+sensitive_patterns:
+  - "**/password*"
+  - "**/secret*"
+  - "**/credential*"
+  - "**/api_key*"
+  - "**/身份证*"
+  - "**/护照*"

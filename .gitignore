@@ -1,0 +1,60 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build
+apps/web/dist/
+*.tsbuildinfo
+
+# Docker
+docker-compose.override.yml
+
+# Backup
+*.sql.gz
+*.dump
+backups/
+
+# Credentials
+*.pem
+*.key
+*.crt
+credentials.json
+service-account.json
+
+# Obsidian
+.obsidian/
+.trash/
+
+# Test coverage
+coverage/
+htmlcov/
+.coverage
+
+# Misc
+*.log
+tmp/
+temp/

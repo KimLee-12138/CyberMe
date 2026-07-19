@@ -1,0 +1,36 @@
+# Replace with your domain
+zhiyuekang.top {
+    # Security headers
+    header {
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.deepseek.com https://api.openai.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    # HSTS (2 years)
+    header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+
+    # API
+    handle /api/* {
+        reverse_proxy api:8000
+    }
+    handle /health/* {
+        reverse_proxy api:8000
+    }
+    handle /ws/* {
+        reverse_proxy api:8000
+    }
+
+    # Web frontend
+    handle {
+        reverse_proxy web:80
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
