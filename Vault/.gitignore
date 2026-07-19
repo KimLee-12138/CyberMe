@@ -1,0 +1,82 @@
+# === CyberMe-Vault .gitignore ===
+# 版本: 1.0
+# 创建: 2026-07-16
+#
+# 原则: 只跟踪 Markdown、配置和代码源文件。
+# 原始附件、缓存、环境、密钥和大文件不进入版本库。
+
+# === 环境与依赖 ===
+.venv/
+venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+
+# === IDE 与编辑器 ===
+.git/
+.idea/
+.vs/
+.vscode/
+
+# === 编译与构建产物 ===
+dist/
+build/
+Debug/
+Release/
+x64/
+*.class
+*.obj
+*.o
+*.exe
+*.dll
+*.pdb
+*.ilk
+
+# === 临时与缓存 ===
+*.tmp
+*.cache
+*.logdb
+*.cdb
+*.hdb
+*.rdb
+*.ddb
+*.qmsg
+*.sdo
+
+# === 大体积原始附件（由 Git LFS 或外部备份处理） ===
+91_Raw-Archive/PDF/*
+91_Raw-Archive/PPT/*
+91_Raw-Archive/DOC/*
+91_Raw-Archive/Images/*
+91_Raw-Archive/Code/*
+91_Raw-Archive/Packages/*
+!91_Raw-Archive/**/.gitkeep
+
+# === 敏感信息（绝对不能入库） ===
+.env
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.token
+credentials.*
+secrets.*
+*secret*
+*password*
+*credential*
+
+# === 会话与临时导出 ===
+*.session
+*.session.*
+temp_export/
+tmp_export/
+*.tmp.md
+
+# === 操作系统 ===
+.DS_Store
+Thumbs.db
+desktop.ini

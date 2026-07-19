@@ -1,0 +1,147 @@
+{
+  "date": "2026-07-16",
+  "total_extracted": 21,
+  "total_failed": 3,
+  "extracted_files": [
+    {
+      "file": "01_数据库基础_提取版_DB_01_数据库基础_课件_未知日期_f96e0896.md",
+      "type": "pdf",
+      "topic": "01_数据库基础",
+      "chars": 3200
+    },
+    {
+      "file": "01_数据库基础_提取版_DB_01_数据库基础_课件_未知日期_78bf7b2b.md",
+      "type": "pdf",
+      "topic": "01_数据库基础",
+      "chars": 2367
+    },
+    {
+      "file": "02_关系模型_提取版_DB_02_关系模型_课件_未知日期_118c74c5.md",
+      "type": "pdf",
+      "topic": "02_关系模型",
+      "chars": 3087
+    },
+    {
+      "file": "02_关系模型_提取版_DB_02_关系模型_课件_未知日期_d711b6fe.md",
+      "type": "pdf",
+      "topic": "02_关系模型",
+      "chars": 2710
+    },
+    {
+      "file": "03_SQL_提取版_DB_03_SQL_课件_未知日期_e0ddeaf5.md",
+      "type": "pdf",
+      "topic": "03_SQL",
+      "chars": 6551
+    },
+    {
+      "file": "03_SQL_提取版_DB_03_SQL_课件_未知日期_a3a72c6e.md",
+      "type": "pdf",
+      "topic": "03_SQL",
+      "chars": 8224
+    },
+    {
+      "file": "06_关系数据理论_提取版_DB_06_关系数据理论_练习_未知日期_6fbbe6df.md",
+      "type": "docx",
+      "topic": "06_关系数据理论",
+      "chars": 3182
+    },
+    {
+      "file": "06_关系数据理论_提取版_DB_06_关系数据理论_练习_未知日期_3003fda0.md",
+      "type": "docx",
+      "topic": "06_关系数据理论",
+      "chars": 3090
+    },
+    {
+      "file": "06_关系数据理论_提取版_DB_06_关系数据理论_课件_未知日期_34513e15.md",
+      "type": "pdf",
+      "topic": "06_关系数据理论",
+      "chars": 2120
+    },
+    {
+      "file": "06_关系数据理论_提取版_DB_06_关系数据理论_课件_未知日期_33aefea0.md",
+      "type": "pdf",
+      "topic": "06_关系数据理论",
+      "chars": 1406
+    },
+    {
+      "file": "07_数据库设计_提取版_DB_07_数据库设计_课件_未知日期_a1457c90.md",
+      "type": "pdf",
+      "topic": "07_数据库设计",
+      "chars": 1211
+    },
+    {
+      "file": "10_事务与恢复_提取版_DB_10_事务与恢复_课件_未知日期_d6b3648c.md",
+      "type": "pdf",
+      "topic": "10_事务与恢复",
+      "chars": 2307
+    },
+    {
+      "file": "学生笔记_第一章 数据库基础.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 2642
+    },
+    {
+      "file": "学生笔记_第七章 数据库设计.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 1204
+    },
+    {
+      "file": "学生笔记_第三章 关系数据库标准语言（SQL）.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 9500
+    },
+    {
+      "file": "学生笔记_第二章 关系数据库.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 4163
+    },
+    {
+      "file": "学生笔记_第五章 数据库完整性.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 1380
+    },
+    {
+      "file": "学生笔记_第六章 关系数据理论.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 1486
+    },
+    {
+      "file": "学生笔记_第十、十一章 事务处理技术.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 2333
+    },
+    {
+      "file": "学生笔记_第四章 数据库安全性.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 2539
+    },
+    {
+      "file": "学生笔记_简答题合集.md",
+      "type": "md",
+      "topic": "数据库",
+      "chars": 2487
+    }
+  ],
+  "failed_files": [
+    {
+      "path": "C:\\Users\\22067\\Desktop\\李尚凯蒸馏\\CyberMe-Vault\\91_Raw-Archive\\PPT\\DB_01_数据库基础_课件_未知日期_2ab42c50.ppt",
+      "type": "ppt"
+    },
+    {
+      "path": "C:\\Users\\22067\\Desktop\\李尚凯蒸馏\\CyberMe-Vault\\91_Raw-Archive\\PPT\\DB_02_关系模型_课件_未知日期_59c33566.ppt",
+      "type": "ppt"
+    },
+    {
+      "path": "C:\\Users\\22067\\Desktop\\李尚凯蒸馏\\CyberMe-Vault\\91_Raw-Archive\\PPT\\DB_03_SQL_课件_未知日期_69fc8513.ppt",
+      "type": "ppt"
+    }
+  ]
+}
