@@ -1,18 +1,20 @@
 <div align="center">
 
-<img src="apps/web/public/favicon.svg" width="80" alt="CyberMe OS Logo">
+<img src="apps/web/public/app-icon.png" width="96" alt="CyberMe Logo">
 
 # CyberMe OS
 
 ### 个人学习操作系统
 
-*围绕长期学习构建的认知基础设施——不只是笔记工具，是第二大脑。*
+从课程资料 → AI 蒸馏 → 知识图谱 → RAG 问答 → 间隔复习
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.139-009688?logo=fastapi)](https://fastapi.tiangolo.com)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi)](https://fastapi.tiangolo.com)
 [![Tailwind](https://img.shields.io/badge/Tailwind-4.3-38BDF8?logo=tailwindcss)](https://tailwindcss.com)
 [![DeepSeek](https://img.shields.io/badge/AI-DeepSeek-536DFE)](https://deepseek.com)
+[![Android](https://img.shields.io/badge/Android-Capacitor%208-3DDC84?logo=android)](https://capacitorjs.com)
+
+[快速开始](#-快速开始) · [环境变量](#-环境变量) · [Android App](#-android-app) · [架构](#-架构) · [数据管线](#-数据管线)
 
 </div>
 
@@ -20,115 +22,106 @@
 
 ## 这是什么？
 
-CyberMe OS 不是"上传文档然后聊天"的通用 RAG 页面。它是一个**围绕个人长期学习构建的认知操作系统**——从资料导入、AI 蒸馏、知识图谱，到 FSRS-5 间隔复习和 RAG 问答，覆盖学习的完整闭环。
+CyberMe 不是“上传文档然后聊天”的通用 RAG 页面。
 
-## ✨ 核心功能
+它围绕**个人长期学习**，把课程资料变成可检索、可追溯、可复习的知识资产：
 
-### 🧠 AI 知识蒸馏
-将课件 PDF、学生笔记等原始资料，通过 DeepSeek AI 自动蒸馏为结构化知识笔记。支持单篇和**一键批量蒸馏整门课**。
+- 课程 PDF / Markdown 导入；
+- AI 蒸馏成结构化知识点笔记；
+- 清洗公式、定义、冲突、重复与来源噪声；
+- RAG 问答，带人类可读的来源卡片；
+- 本地资料不足时**明确降级**到 DeepSeek，不伪装成课程资料；
+- 回答后可直接生成 3 道选择题检验；
+- FSRS-5 间隔复习 + 知识图谱 + 雨课堂只读同步。
 
-### 📚 20 门课程知识库
-涵盖数据结构、算法、计组、数据库、微积分、概率论、近代史等，**433 篇可追溯知识点笔记**，带来源页码与数据质量标记。
+> 这个仓库不包含个人 `data/` 语料或雨课堂 session。  
+> Vault 中的个人学习内容属于作者自己的数据资产；如果你 fork 这个项目，建议先清空/替换 `Vault/` 或把仓库设为私有。
+> 你自己放入 `data/` 后即可运行完整的 RAG / 数据质量页。
 
-### 🔗 知识图谱可视化
-力导向图展示知识点之间的关联——前置知识、对比关系、应用场景。点击节点直接跳转，支持拖拽和缩放。
+---
 
-### 🤖 RAG 增强 AI 问答
-问课程问题 → 系统检索 433 篇清洗笔记 → DeepSeek 结合你的资料生成透彻讲解 → 人类可读的来源卡片。**本地资料不足时会明确降级到 DeepSeek，不伪装成课程资料。**
+## ✨ 功能
 
-### 📝 FSRS-5 间隔复习
-基于遗忘曲线的科学复习系统。4 级评分（完全忘了/勉强记得/正确回忆/非常轻松），自动计算最优复习间隔。复习统计面板实时显示记忆保持率。
+### 📚 课程知识库
 
-### 🔄 Obsidian 双向同步
-用 Obsidian 编辑笔记 → 一键同步到网页端。sync-agent 自动检测文件变更，上传到服务器。
+- 20 门有内容课程；
+- 433 篇清洗后的知识点笔记；
+- 2,599 个 RAG chunk；
+- 来源页码、section、来源哈希可追溯；
+- 公式、定义、易错点、关系、例子结构化。
 
-### 📱 PWA 移动端支持
-可安装到手机主屏幕；Android debug APK 已可构建与安装（JDK 21 + WebView 111+）。暗色模式、打印样式、离线缓存齐备。
+### 🧹 数据质量
 
-## 🏗️ 技术架构
+- 公式缺失：**73 → 0**；
+- 定义缺失：**51 → 0**；
+- 原始来源串：**1,804 → 3**；
+- 冲突：4 条 → 1 条已解决、1 条非冲突、2 条保留（原文自身矛盾）；
+- 203 组来源近重复不进入 RAG；
+- 2 个低质来源隔离；
+- 原始 source chunk 2,555 → 0，避免代码/封面/OCR 噪声污染回答。
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    前端 (apps/web)                    │
-│          React 19 + TypeScript + Tailwind 4           │
-│        Vite PWA · Lucide Icons · Force-Graph        │
-├─────────────────────────────────────────────────────┤
-│                   API 网关 (8000)                     │
-├──────────────┬──────────────┬─────────────────────────┤
-│   Chat/RAG    │   Learning   │      Knowledge          │
-│  问答引擎     │  FSRS 复习   │  课程/文档/图谱          │
-├──────────────┼──────────────┼─────────────────────────┤
-│  Model Gateway│  Retrieval   │      Projects           │
-│ DeepSeek/OpenAI│ 混合检索    │  GitHub 集成            │
-├──────────────┴──────────────┴─────────────────────────┤
-│                    数据层                              │
-│        PostgreSQL + pgvector · Redis · MinIO          │
-├─────────────────────────────────────────────────────┤
-│               Sync Agent (apps/sync-agent)            │
-│         本地 Vault 扫描 · 文件监听 · 增量同步           │
-└─────────────────────────────────────────────────────┘
-```
+### 🤖 RAG 问答
 
-### 技术栈
+- BM25 检索 2,599 个清洗 chunk；
+- 课程内/跨课程检索，相关性过滤，避免用无关课程凑数；
+- 来源编号在正文中剥离，前端显示“来源 1 · 标题 · 章节 · 页码”；
+- 本地证据不足、核心词缺失、模型拒答或无 citation 时，自动降级 DeepSeek；
+- 降级回答固定提示：
 
-| 层 | 技术 |
-|---|------|
-| **前端** | React 19 · TypeScript · Tailwind CSS v4 · Vite · PWA · Capacitor |
-| **后端** | FastAPI · SQLAlchemy · asyncpg · Redis · Celery |
-| **AI** | DeepSeek (deepseek-chat / deepseek-reasoner) · 意图分类 · 混合检索 · RAG |
-| **复习** | FSRS-5 算法 · 稳定性/难度追踪 · 遗忘曲线 · 记忆保持率 |
-| **同步** | watchdog · SHA-256 哈希 · 增量事件队列 · JWT 认证 |
-| **基础设施** | Docker · Caddy · Nginx · Systemd |
+> 未检索到足够的本地资料，已降级使用 DeepSeek 模型知识回答；以下内容不是你的课程资料。
 
-## 📂 项目结构
+### 🧠 讲透模式
 
-```
-cyberme-os/
-├── apps/
-│   ├── web/                # React PWA 前端 (19 页面)
-│   │   ├── src/
-│   │   │   ├── components/ # 布局 + UI 组件
-│   │   │   ├── pages/      # 19 个页面组件
-│   │   │   ├── api/        # API 客户端
-│   │   │   ├── stores/     # Zustand 状态管理
-│   │   │   └── lib/        # 工具函数 + 枚举映射
-│   │   ├── android/         # Capacitor Android 配置
-│   │   └── public/          # 静态资源 + PWA manifest
-│   ├── api/                 # FastAPI 后端
-│   │   ├── app/
-│   │   │   ├── chat/        # RAG 问答引擎
-│   │   │   ├── knowledge/   # 课程/文档/图谱 API
-│   │   │   ├── learning/    # FSRS 复习 + 导师 + 写作
-│   │   │   ├── model_gateway/ # DeepSeek/OpenAI 网关
-│   │   │   ├── retrieval/   # 混合检索 (FTS + 向量 + 图谱)
-│   │   │   ├── projects/    # 项目管理 CRUD
-│   │   │   ├── github_proxy/ # GitHub API 代理
-│   │   │   ├── sync/        # 同步协议 API
-│   │   │   └── distill_router.py  # AI 知识蒸馏
-│   │   └── infra/migrations/    # 数据库迁移
-│   └── sync-agent/          # 本地同步代理
-│       ├── agent/           # 扫描/监听/推送
-│       ├── main.py          # CLI 入口 (pair/now/watch)
-│       └── sync-policy.yaml # 同步策略配置
-├── Vault/                   # 知识库 (896 篇 Markdown)
-│   ├── 20_University/       # 25 门课程笔记
-│   ├── 01_Home/             # 首页/任务/变更日志
-│   └── 10_Self/             # 个人模型/风格样本
-├── infra/                   # Caddy · Docker · 备份
-├── docker-compose.yml
-└── docs/                    # 文档
-```
+回答按“结论 → 机制 → 公式/步骤 → 例子 → 易错点 → 关联概念”组织：
+
+- 允许讲得详细、稍复杂；
+- 要求解释变量、条件、边界；
+- 不把模型常识伪装成课程原文；
+- 结尾询问是否出题。
+
+### 🎯 出题检验
+
+- 每条回答下可生成 3 道四选一题；
+- 选项卡片、提交、正确/错误标记、逐题解析、得分；
+- 可再生成一组。
+
+### 🕸️ 知识图谱
+
+- 1,155 节点 / 2,095 边；
+- 24 门课程、389 个 section、433 个 topic、309 个 source；
+- 力导向图，点击课程展开章节/主题/来源；
+- 节点颜色：课程前置、所属课程、章节、来源、AI 候选。
+
+### 🔁 复习与同步
+
+- FSRS-5 间隔复习；
+- 4 级评分；
+- 雨课堂只读同步：课程、作业、课件；
+- 单节课课件 PDF 导出，Android 保存到 `Documents/CyberMe/`。
+
+### 📱 多端
+
+- 桌面 Web；
+- 手机 PWA / 响应式；
+- Android Capacitor App（内置前端 APK）；
+- 自定义 Select / Checkbox / Confirm，无系统原生下拉框。
+
+---
 
 ## 🚀 快速开始
 
 ### 前置要求
 
-- Python 3.12+
-- Node.js 20+
-- PostgreSQL 15+ (需 pgvector 扩展)
-- Redis (可选，用于 Celery)
+| 依赖 | 版本 |
+|---|---|
+| Python | 3.12+ |
+| Node.js | 22+ |
+| Docker | 最新版 |
+| PostgreSQL | pgvector（compose 已包含） |
+| Redis | 7+（compose 已包含） |
+| Android 构建 | JDK 21 + Android SDK 35（可选） |
 
-### 1. 克隆仓库
+### 1. 克隆
 
 ```bash
 git clone https://github.com/KimLee-12138/CyberMe.git
@@ -143,9 +136,9 @@ docker compose up -d postgres redis
 
 本项目默认：
 
-- Postgres：`127.0.0.1:15432`（Windows 的 5432 常被系统保留）
-- Redis：`127.0.0.1:6379`
-- 两者都只绑定 loopback，不对局域网开放
+- Postgres：`127.0.0.1:15432`（Windows 的 5432 常被系统保留）；
+- Redis：`127.0.0.1:6379`；
+- 两者只绑定 loopback，不对局域网开放。
 
 ### 3. 配置环境变量
 
@@ -153,67 +146,140 @@ docker compose up -d postgres redis
 cp .env.example .env
 ```
 
-在**仓库根目录**的 `.env` 中填写：
+至少填写：
 
-- `SECRET_KEY` — 随机字符串
-- `DEEPSEEK_API_KEY` — DeepSeek API Key（RAG 必需）
-- `DATABASE_URL` / `REDIS_URL` — 默认就是本地 compose 的地址
+```dotenv
+SECRET_KEY=换成一个随机字符串
+DEEPSEEK_API_KEY=你的_DeepSeek_Key
+```
 
-后端和 Alembic 都会读取仓库根目录的 `.env`。
+其余保持 `.env.example` 默认即可；完整说明见 [环境变量](#-环境变量)。
 
-### 4. 启动后端
+### 4. 后端
 
 ```bash
 cd apps/api
 python -m venv .venv
-source .venv/bin/activate    # Windows: .venv\Scripts\activate
+
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+# source .venv/bin/activate
+
 pip install -r requirements.txt
 alembic upgrade head
+
 cd ../..
 python tools/seed_demo_user.py
-cd apps/api
-uvicorn app.main:app --reload --port 8002
-```
 
-默认 demo 账号：`demo / cyberme2026`（可用 `DEMO_PASSWORD` 覆盖）。
-
-### 5. 启动前端
-
-```bash
-cd apps/web
-npm install
-npm run dev                  # http://localhost:3000
-```
-
-Vite 代理 `/api` 到 `http://127.0.0.1:8002`。
-手机浏览器临时调试可显式开启（Android APK 不需要 Vite，见下一节）：
-
-```powershell
-$env:VITE_DEV_HOST='0.0.0.0'
-npm run dev
-```
-
-### 6. 构建 Android debug APK
-
-前置：**JDK 21**（JDK 17 编不过 Capacitor 8）、Android SDK 35、手机 Android WebView 111+。
-
-后端必须对手机所在的局域网可见，并由它同时托管构建好的前端（同源 Cookie 登录）：
-
-```powershell
 cd apps/api
 uvicorn app.main:app --host 0.0.0.0 --port 8002
 ```
 
-另开一个终端：
+默认 demo 账号：`demo / cyberme2026`（可用 `DEMO_PASSWORD` 覆盖）。
 
-```powershell
+### 5. 前端
+
+```bash
 cd apps/web
-npm run android:debug
-# 或指定 IP
-powershell -ExecutionPolicy Bypass -File ..\..\scripts\build-android.ps1 -ApiHost 192.168.31.244
+npm ci
+npm run dev
 ```
 
-脚本会：构建前端 → `cap sync` → Gradle 打 debug APK。
+打开 `http://localhost:3000`。
+
+Vite 会把 `/api` 代理到 `http://127.0.0.1:8002`。
+
+### 6. 数据（可选但推荐）
+
+仓库不包含私人课程语料。把你自己的资料按现有 pipeline 放到 `data/`，或者直接使用空知识库：
+
+- 没有 `data/` 时，笔记页/数据质量页为空；
+- RAG 检索不到本地内容时，会自动降级 DeepSeek，并在回答中明确提示。
+
+完整重建命令见 [数据管线](#-数据管线)。
+
+---
+
+## 🔐 环境变量
+
+配置文件：仓库根目录 `.env`（由 `.env.example` 复制）。
+
+### 必需
+
+| 变量 | 示例 | 说明 |
+|---|---|---|
+| `APP_ENV` | `development` | `development` 会启用本地 CORS / 非 Secure cookie |
+| `APP_BASE_URL` | `http://localhost:3000` | 生产环境前端 origin |
+| `SECRET_KEY` | 随机 32+ 字符 | JWT / session 签名，必须换 |
+| `DATABASE_URL` | `postgresql+asyncpg://cyberme:password@127.0.0.1:15432/cyberme` | Postgres + pgvector |
+| `REDIS_URL` | `redis://127.0.0.1:6379/0` | Redis |
+| `DEEPSEEK_API_KEY` | `sk-...` | RAG 讲解、蒸馏、降级回答、出题 |
+
+### 可选
+
+| 变量 | 说明 |
+|---|---|
+| `DEEPSEEK_BASE_URL` | 默认 `https://api.deepseek.com/v1` |
+| `GITHUB_TOKEN` | 导入 GitHub 项目 |
+| `YKT_REGION` | 默认 `changjiang` |
+| `YKT_SESSIONID` | 长江雨课堂 sessionid；也可在 `/yuketang` 页面写入 |
+| `YKT_REFRESH_MINUTES` | 同步/缓存刷新间隔 |
+| `S3_ENDPOINT` / `S3_BUCKET` / `S3_ACCESS_KEY` / `S3_SECRET_KEY` | 对象存储（可选） |
+| `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` | 其他模型 provider（可选） |
+| `MONTHLY_BUDGET_LIMIT` | 月度预算，默认 50 |
+| `SYNC_MAX_FILE_MB` | 同步单文件上限，默认 10 |
+| `RAW_ARCHIVE_UPLOAD` | 是否上传原始归档，默认 false |
+
+### 前端变量
+
+`apps/web/.env.example`：
+
+| 变量 | 说明 |
+|---|---|
+| `VITE_API_BASE_URL` | 默认 `/api/v1`；内置 APK 构建时设成绝对地址 |
+
+### 安全提醒
+
+- `.env` 已被 `.gitignore` 忽略，不要提交；
+- 雨课堂 session 会加密保存在 `data/integrations/yuketang/`，不在仓库中；
+- 内置 APK 使用 Bearer token 登录，token 存在本机 localStorage；
+- 公网部署请使用 HTTPS，并把 `APP_ENV=production`。
+
+---
+
+## 📱 Android App
+
+### 直接下载
+
+最新内置前端 APK：
+
+**[下载 CyberMe-android-bundled.apk](https://github.com/KimLee-12138/CyberMe/releases/latest/download/CyberMe-android-bundled.apk)**
+
+安装：
+
+```bash
+adb install -r CyberMe-android-bundled.apk
+```
+
+或在手机浏览器打开上面的 Release 链接下载安装。
+
+### 使用条件
+
+- 手机和电脑在**同一个 Wi-Fi**；
+- 后端必须监听 `0.0.0.0:8002`；
+- 当前发布包的 API 固定为：
+
+```text
+http://192.168.31.244:8002/api/v1
+```
+
+如果你的电脑 IP 不是这个，需要重新打包：
+
+```powershell
+cd CyberMe
+powershell -ExecutionPolicy Bypass -File scripts\build-android.ps1 -ApiHost <你的局域网IP> -Bundled
+```
 
 产物：
 
@@ -221,100 +287,162 @@ powershell -ExecutionPolicy Bypass -File ..\..\scripts\build-android.ps1 -ApiHos
 apps/web/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-安装：
+### 两种 Android 模式
 
-```powershell
-adb install -r apps/web/android/app/build/outputs/apk/debug/app-debug.apk
-```
+| 模式 | 命令 | 说明 |
+|---|---|---|
+| 内置前端 | `scripts\build-android.ps1 -Bundled` | APK 内置 `dist/`，API 走绝对地址 + Bearer token |
+| 远程 SPA | `scripts\build-android.ps1` | WebView 打开 `http://<IP>:8002`，同源 cookie |
 
-说明：
-
-- WebView 直接打开 `http://<LAN-IP>:8002`，API 与页面同源，**HttpOnly session cookie 可用**；
-- debug manifest 仅 debug 允许 cleartext；生产请用 HTTPS 并设置 `CAP_SERVER_URL=https://...`；
-- IP 变化后重新运行脚本；
-- Android 15 模拟器已实测：登录、驾驶舱、笔记、质量、图谱、RAG + 证据面板。
-
-详见 [`docs/android.md`](docs/android.md)。
-
-### 7. 长江雨课堂只读同步
-
-浏览器打开 `http://127.0.0.1:8002/yuketang`（手机同一 Wi-Fi 用 `http://192.168.31.244:8002/yuketang`）。
-
-1. 登录 `changjiang.yuketang.cn`；
-2. F12 → Application → Cookies → 复制 `sessionid`；
-3. 粘贴到 CyberMe 页面，点「保存并同步」。
-
-会同步课程、作业、公告、截止时间和课件；每 15 分钟自动刷新，不做签到/答题/提交。
-
-详见 [`docs/yuketang.md`](docs/yuketang.md)。
-
-### 8. 配合同步代理
-
-```bash
-cd apps/sync-agent
-pip install -r requirements.txt
-python main.py pair          # 输入配对码和 Vault 路径
-python main.py now           # 全量同步
-python main.py watch         # 监听模式
-```
-
-### Docker 一键启动
-
-```bash
-docker compose up -d
-```
-
-## 🎯 使用指南
-
-| 你想做什么 | 去哪里 | 怎么做 |
-|-----------|--------|--------|
-| 浏览 433 篇笔记 | `http://localhost:3000/notes` | 课程/flag 筛选 → 搜索 → 看正文/来源页码 |
-| 看数据质量 | `http://localhost:3000/quality` | 漏斗 → 质量分级 → 冲突/隔离/公式缺失 |
-| AI 问答（引用笔记） | `http://localhost:3000/ask` | 输入问题 → 等待 RAG 回答 → 看证据 |
-| 知识图谱 | `http://localhost:3000/graph` | 24 课程 → 点课程展开 → 点主题看来源 |
-| 搜索笔记 | 顶部搜索框 | 输入关键词 → 点结果跳到 `/notes` |
-| 间隔复习 | `http://localhost:3000/review` | 看卡片 → 点评分按钮 |
-| AI 蒸馏提取资料 | `http://localhost:3000/distill` | 选课 → 一键蒸馏 |
-| 导入 GitHub 项目 | `http://localhost:3000/projects` | 点"GitHub" → 点"导入" |
-| 在 Obsidian 中编辑 | Vault 目录 | 用 Obsidian 打开 → 编辑 → `python main.py now` |
-
-## 🔑 核心 Feat
-
-- **RAG 问答** — 2,599 块清洗笔记检索 → DeepSeek 透彻讲解 → 人类可读来源卡片；本地证据不足时标记 `degraded` 并降级 DeepSeek
-- **笔记浏览器** — 433 篇 / 20 门课；课程、flag、正文搜索；来源页码；笔记 ↔ 图谱互跳
-- **数据质量看板** — 868→410→309→414→4,523→433；公式缺失 0、冲突处理、隔离、来源去重
-- **知识图谱** — 1,155 节点 / 2,095 边；24 课程 / 389 section / 433 topic / 309 source；18 条课程前置边
-- **出题检验** — 每条回答可生成 3 道四选一题，作答后给分与逐题解析
-- **FSRS-5 间隔复习** — 17 参数模型，stability/difficulty 追踪，4 级评分，自动排期
-- **AI 知识蒸馏** — SSE 流式批量处理，deepseek-reasoner 深度推理
-- **GitHub 集成** — OAuth Token 代理，仓库列表 + 一键导入为项目
-- **sync-agent** — SHA-256 哈希比对，增量事件队列，冲突检测
-- **20 门课程** — 433 篇清洗笔记，LaTeX 公式，来源可追溯
-- **暗色模式** — `.dark` CSS 类全局适配
-- **PWA / Android** — Service Worker 离线缓存；内置前端 APK 与 Bearer token 登录
-
-## 🔒 关于私有语料
-
-这个仓库不提交 `data/`（个人课程 PDF/笔记/雨课堂 session）和 `Vault/` 中的个人内容。运行 RAG/数据质量页需要在本机放入自己的 `data/`；代码、schema、pipeline 与前端均可独立构建。
-
-## 📊 规模
-
-| 指标 | 数量 |
-|------|------|
-| 课程 | 20 门（有内容） |
-| 知识笔记 | 433 篇 |
-| 清洗 RAG chunk | 2,599 块 |
-| 数据来源 | 309 个蒸馏文件 / 414 section part |
-| 知识图谱节点 | 1,155 |
-| 知识图谱边 | 2,095 |
-| 前端页面 | 19+ 个 |
-
-## 许可证
-
-MIT License
+内置模式不使用 WebView 远程 SPA，因此更适合“打开就有界面”的自用场景。
 
 ---
 
-<div align="center">
-<sub>Built with ❤️ by KimLee + Claude Opus 4.6</sub>
-</div>
+## 🏗️ 架构
+
+```text
+┌─────────────────────────────────────────────────────┐
+│                     Web / Android                    │
+│   React 19 + TypeScript + Tailwind 4 + Capacitor     │
+│   自定义 Select / Checkbox / Confirm / 出题卡片       │
+└───────────────────────┬─────────────────────────────┘
+                        │ /api/v1
+┌───────────────────────▼─────────────────────────────┐
+│                     FastAPI                          │
+│  Auth │ Notes │ RAG │ KG │ Corpus │ Learning │ YKT   │
+│  ├─ RAG: BM25 2599 chunks → DeepSeek → 来源卡片      │
+│  ├─ 降级: 本地证据不足 → DeepSeek + degraded banner   │
+│  ├─ Quiz: 3 道四选一题                               │
+│  └─ 雨课堂: 只读 sessionid，加密保存                  │
+└──────────────┬──────────────────────┬────────────────┘
+               │                      │
+        PostgreSQL + pgvector       Redis
+        Vault / 课程 / 笔记          缓存 / 队列
+```
+
+---
+
+## 🧪 数据管线
+
+原始语料 → 清洗 → 分节 → 蒸馏 → 主题 → 笔记 → 增强 → RAG。
+
+```bash
+# 1. 构建语料
+python tools/build_registry.py
+python tools/extract_clean.py
+python tools/normalize_clean.py
+python tools/dedup_near.py
+python tools/quality_score.py
+python tools/build_sections.py
+python tools/map_distill.py --concurrency 8
+python tools/merge_topics.py --concurrency 8
+python tools/generate_notes.py
+python tools/freeze_v1.py
+
+# 2. v2 AI enrichment（不覆盖 data/notes/）
+python tools/enrich_notes.py --mode all --concurrency 8
+python tools/supplement_formulas.py
+python tools/supplement_definitions.py
+python tools/resolve_conflicts.py
+python tools/build_enriched_manifest.py
+
+# 3. 重建 RAG
+cd apps/api
+python -m app.rag.loader
+cd ../..
+```
+
+`data/notes_enriched/_complete.json` 存在时，运行时优先使用 enriched notes。
+
+原始 source chunk 默认不进入 RAG：
+
+```bash
+# 只有确认原文干净时才开启
+CYBERME_INCLUDE_SOURCE_CHUNKS=1
+```
+
+---
+
+## 🧪 测试
+
+```bash
+# 后端离线测试
+pytest -q
+
+# 数据质量烟测
+python tools/corpus_smoke_test.py
+
+# RAG 六问烟测（需要 DEEPSEEK_API_KEY）
+python tools/rag_smoke_test.py
+
+# 前端构建
+cd apps/web
+npm run build
+```
+
+CI（`.github/workflows/ci.yml`）会跑：
+
+- 后端 `pytest`（没有私有 `data/` 时自动跳过语料测试）；
+- 前端 `npm ci && npm run build`。
+
+---
+
+## 📁 项目结构
+
+```text
+CyberMe/
+├── apps/
+│   ├── api/                 # FastAPI
+│   │   ├── app/
+│   │   │   ├── auth/        # 登录 / TOTP / token
+│   │   │   ├── rag/         # BM25、回答、降级、quiz
+│   │   │   ├── notes/       # 笔记浏览器
+│   │   │   ├── corpus/      # 数据质量看板
+│   │   │   ├── integrations/yuketang/
+│   │   │   └── ...
+│   │   └── requirements.txt
+│   └── web/                 # React + Vite + Capacitor
+│       ├── src/
+│       ├── public/
+│       └── android/
+├── tools/                   # 数据管线 / enrichment / smoke tests
+├── tests/                   # 后端测试
+├── docs/                    # 说明文档
+├── scripts/build-android.ps1
+├── docker-compose.yml
+└── .env.example
+```
+
+---
+
+## 🧭 常用页面
+
+| 页面 | 地址 |
+|---|---|
+| 登录 | `http://localhost:3000/login` |
+| 驾驶舱 | `http://localhost:3000/` |
+| 问答 | `http://localhost:3000/ask` |
+| 笔记 | `http://localhost:3000/notes` |
+| 知识图谱 | `http://localhost:3000/graph` |
+| 数据质量 | `http://localhost:3000/quality` |
+| 雨课堂 | `http://localhost:3000/yuketang` |
+| 复习 | `http://localhost:3000/review` |
+
+---
+
+## ⚠️ 已知边界
+
+- 个人语料不进入仓库；RAG 在无本地资料时会降级 DeepSeek。
+- `PROB-TOPIC-005` 的 2 条冲突来自原文自身矛盾，笔记保留，但不进入 RAG。
+- 193 篇无“例子”、55 篇无“易错点”属于可选字段，没有强行编造。
+- 167 篇标记 `source_noisy`：原文有 OCR/封面/代码噪声，正文与 RAG 已清洗。
+- 内置 APK 的 API 地址是打包时的局域网 IP，换网络需重打包。
+
+---
+
+## 🙏 说明
+
+这是一个个人学习项目，不是通用 SaaS。  
+代码、pipeline、schema 与可公开的文档保留在仓库；Vault 与 `data/` 中的个人学习资产请按需私有化或替换。
+
+如果这个项目对你有启发，欢迎 Star ⭐
