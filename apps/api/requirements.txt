@@ -40,5 +40,6 @@ numpy>=1.26.0
 watchdog>=5.0.0
 
 # Utilities
+Pillow>=10.0.0
 python-dateutil>=2.9.0
 python-dotenv>=1.0.1
