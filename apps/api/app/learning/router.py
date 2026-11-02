@@ -501,7 +501,7 @@ async def get_review_stats(
 ):
     """Return review statistics for dashboard display."""
     now = datetime.now(timezone.utc)
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Total cards
     total_cards = await db.scalar(
@@ -533,7 +533,7 @@ async def get_review_stats(
     states = {row[0]: row[1] for row in state_result.fetchall()}
 
     # Rating distribution (last 30 days)
-    month_ago = (now.replace(hour=0, minute=0, second=0, microsecond=0) - __import__('datetime').timedelta(days=30)).isoformat()
+    month_ago = (now.replace(hour=0, minute=0, second=0, microsecond=0) - __import__('datetime').timedelta(days=30))
     rating_result = await db.execute(
         select(ReviewEvent.rating, func.count()).where(
             ReviewEvent.user_id == user.id,
