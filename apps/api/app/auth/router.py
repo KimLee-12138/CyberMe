@@ -17,6 +17,7 @@ from app.auth.service import (
     pair_device,
     revoke_device,
 )
+from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
 
@@ -63,6 +64,10 @@ def _get_client_info(request: Request) -> tuple[str | None, str | None]:
     return ip, ua[:200] if ua else None
 
 
+def _wants_native_token(request: Request) -> bool:
+    return request.headers.get("X-CyberMe-Client", "").lower() == "native"
+
+
 @router.post("/auth/login")
 async def login(
     request: Request,
@@ -99,7 +104,7 @@ async def login(
         key=SESSION_COOKIE,
         value=tokens["session_token"],
         httponly=True,
-        secure=False,  # Set True in production with HTTPS
+        secure=not settings.is_development,
         samesite="lax",
         max_age=86400,  # 24 hours
     )
@@ -108,6 +113,7 @@ async def login(
         "status": "authenticated",
         "user": tokens["user"],
         "refresh_token": tokens["refresh_token"],
+        **({"session_token": tokens["session_token"]} if _wants_native_token(request) else {}),
     }
 
 
@@ -133,7 +139,7 @@ async def verify_totp(
         key=SESSION_COOKIE,
         value=tokens["session_token"],
         httponly=True,
-        secure=False,
+        secure=not settings.is_development,
         samesite="lax",
         max_age=86400,
     )
@@ -142,6 +148,7 @@ async def verify_totp(
         "status": "authenticated",
         "user": tokens["user"],
         "refresh_token": tokens["refresh_token"],
+        **({"session_token": tokens["session_token"]} if _wants_native_token(request) else {}),
     }
 
 
@@ -176,7 +183,7 @@ async def refresh(body: RefreshRequest, response: Response):
         key=SESSION_COOKIE,
         value=tokens["session_token"],
         httponly=True,
-        secure=False,
+        secure=not settings.is_development,
         samesite="lax",
         max_age=86400,
     )

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { BrainCircuit, GraduationCap, Lightbulb, PenLine, RefreshCw, Timer, type LucideIcon } from 'lucide-react'
 import Markdown from '../components/ui/Markdown'
 import { useTitle } from '../lib/useTitle'
 import { toast } from '../stores/toastStore'
@@ -12,17 +13,17 @@ interface ModeInfo {
   key: TutorMode
   label: string
   desc: string
-  icon: string
+  icon: LucideIcon
   color: string
 }
 
 const MODES: ModeInfo[] = [
-  { key: 'concept', label: '概念讲解', desc: '一句话→原理→公式→例子→易错点', icon: '💡', color: 'border-blue-500' },
-  { key: 'socratic', label: '苏格拉底', desc: '一次一问，逐步深入', icon: '🎓', color: 'border-purple-500' },
-  { key: 'closed_book', label: '闭卷回忆', desc: '不看笔记，主动回忆', icon: '🧠', color: 'border-amber-500' },
-  { key: 'step_by_step', label: '分步做题', desc: '逐步解题，记录每一步', icon: '📝', color: 'border-emerald-500' },
-  { key: 'mock_exam', label: '模拟考试', desc: '限时答题，自动批改', icon: '⏱️', color: 'border-red-500' },
-  { key: 'mistake_retrain', label: '错题复训', desc: '从错误中学习，生成变体', icon: '🔄', color: 'border-pink-500' },
+  { key: 'concept', label: '概念讲解', desc: '一句话→原理→公式→例子→易错点', icon: Lightbulb, color: 'border-blue-500' },
+  { key: 'socratic', label: '苏格拉底', desc: '一次一问，逐步深入', icon: GraduationCap, color: 'border-purple-500' },
+  { key: 'closed_book', label: '闭卷回忆', desc: '不看笔记，主动回忆', icon: BrainCircuit, color: 'border-amber-500' },
+  { key: 'step_by_step', label: '分步做题', desc: '逐步解题，记录每一步', icon: PenLine, color: 'border-emerald-500' },
+  { key: 'mock_exam', label: '模拟考试', desc: '限时答题，自动批改', icon: Timer, color: 'border-red-500' },
+  { key: 'mistake_retrain', label: '错题复训', desc: '从错误中学习，生成变体', icon: RefreshCw, color: 'border-pink-500' },
 ]
 
 // ── Main component ───────────────────────────────────────
@@ -109,7 +110,7 @@ export default function TutorPage() {
                 : 'border-transparent bg-secondary/50 text-muted-foreground hover:bg-secondary'
             }`}
           >
-            <span className="text-xl">{m.icon}</span>
+            <m.icon size={20} />
             <span className="mt-1 text-xs font-medium">{m.label}</span>
           </button>
         ))}

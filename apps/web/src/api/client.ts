@@ -1,4 +1,15 @@
-const BASE_URL = '/api/v1'
+import { Capacitor } from '@capacitor/core'
+import { Directory, Filesystem } from '@capacitor/filesystem'
+import { Share } from '@capacitor/share'
+import { getAuthToken } from '../lib/authToken'
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+const NATIVE = Capacitor.isNativePlatform()
+
+function authHeaders(): Record<string, string> {
+  const token = getAuthToken()
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | undefined>
@@ -37,6 +48,8 @@ async function request<T = unknown>(endpoint: string, options: RequestOptions = 
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...(NATIVE ? { 'X-CyberMe-Client': 'native' } : {}),
+      ...authHeaders(),
       ...init.headers,
     },
   })
@@ -82,6 +95,64 @@ export const api = {
 
   delete: <T = unknown>(endpoint: string, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: 'DELETE' }),
+}
+
+export async function download(endpoint: string, filename: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    credentials: 'include',
+    headers: {
+      ...(NATIVE ? { 'X-CyberMe-Client': 'native' } : {}),
+      ...authHeaders(),
+    },
+  })
+  if (!response.ok) {
+    let message = response.statusText
+    try {
+      const body = await response.json()
+      message = body.detail || body.message || message
+    } catch {
+      // not JSON
+    }
+    throw new Error(message || '下载失败')
+  }
+  const blob = await response.blob()
+  if (Capacitor.isNativePlatform()) {
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        const value = String(reader.result || '')
+        resolve(value.includes(',') ? value.split(',')[1] : value)
+      }
+      reader.onerror = () => reject(new Error('读取 PDF 失败'))
+      reader.readAsDataURL(blob)
+    })
+    const path = `CyberMe/${filename}`
+    const saved = await Filesystem.writeFile({
+      path,
+      data: base64,
+      directory: Directory.Documents,
+      recursive: true,
+    })
+    try {
+      await Share.share({
+        title: filename,
+        url: saved.uri,
+        dialogTitle: '导出课件 PDF',
+      })
+    } catch {
+      // The file is already saved even if the user dismisses the share sheet.
+    }
+    return
+  }
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
 }
 
 export { ApiError }

@@ -6,6 +6,8 @@ import { platformLabel } from '../lib/enums'
 import { useTitle } from '../lib/useTitle'
 import { fetchDashboard } from '../api/learning'
 import { useQuery } from '@tanstack/react-query'
+import { confirm } from '../components/ui/ConfirmDialog'
+import { toast } from '../stores/toastStore'
 
 interface Device {
   id: string
@@ -44,15 +46,19 @@ export default function SettingsPage() {
   }, [])
 
   const handleRevoke = async (deviceId: string, deviceName: string) => {
-    if (!confirm(`确认撤销设备 "${deviceName}" 的访问权限？该设备将无法再同步数据。`)) {
-      return
-    }
+    const ok = await confirm({
+      title: '撤销设备权限？',
+      message: `「${deviceName}」将无法再同步数据。`,
+      confirmLabel: '撤销',
+      danger: true,
+    })
+    if (!ok) return
     setRevoking(deviceId)
     try {
       await revokeDevice(deviceId)
       setDevices((prev) => prev.filter((d) => d.id !== deviceId))
     } catch {
-      alert('撤销失败，请重试')
+      toast.error('撤销失败，请重试')
     } finally {
       setRevoking(null)
     }
@@ -183,7 +189,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">月预算</span>
             <span className="text-xs text-muted-foreground">
-              {health?.system_health?.budget ? `$${health.system_health.budget.monthly_cost_estimate?.toFixed(2)} / $${health.system_health.budget.budget_limit?.toFixed(0)}` : '-'}
+              {health?.system_health?.budget ? `$${health.system_health.budget.monthly_cost_estimate?.toFixed(2)} / $${health.system_health.budget.monthly_budget_limit?.toFixed(0)}` : '-'}
             </span>
           </div>
           <div className="flex items-center justify-between">

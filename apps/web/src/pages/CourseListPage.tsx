@@ -1,8 +1,10 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import { BookOpen } from 'lucide-react'
 import { fetchCourses } from '../api/knowledge'
 import { useTitle } from '../lib/useTitle'
+import Select from '../components/ui/Select'
 
 type SortKey = 'name' | 'knowledge' | 'indexed'
 
@@ -55,15 +57,17 @@ export default function CourseListPage() {
           placeholder="搜索课程名或代码..."
           className="flex-1 rounded-xl border border-border bg-white px-4 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none"
         />
-        <select
+        <Select
           value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as SortKey)}
-          className="rounded-xl border border-border bg-white px-3 py-2 text-sm"
-        >
-          <option value="name">按名称</option>
-          <option value="knowledge">按知识数量</option>
-          <option value="indexed">按索引时间</option>
-        </select>
+          onChange={(value) => setSortBy(value as SortKey)}
+          ariaLabel="课程排序"
+          className="w-44"
+          options={[
+            { value: 'name', label: '按名称' },
+            { value: 'knowledge', label: '按知识数量' },
+            { value: 'indexed', label: '按索引时间' },
+          ]}
+        />
       </div>
 
       {isLoading && (
@@ -78,7 +82,7 @@ export default function CourseListPage() {
 
       {!isLoading && filtered.length === 0 && (
         <div className="rounded-2xl border border-border bg-white py-12 text-center shadow-sm">
-          <span className="text-3xl">📚</span>
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef4ff] text-[#2563eb]"><BookOpen size={22} /></span>
           <p className="mt-3 text-sm text-muted-foreground">
             {search ? '未找到匹配的课程' : '暂无课程数据'}
           </p>

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import Markdown from '../components/ui/Markdown'
+import Select from '../components/ui/Select'
+import Checkbox from '../components/ui/Checkbox'
 import { fetchProject, updateProject, createHypothesis, updateHypothesis, createExperiment, createRisk } from '../api/projects'
 import { projectStatusLabel, impactLabel } from '../lib/enums'
 import { useTitle } from '../lib/useTitle'
@@ -182,12 +184,19 @@ function HypothesisActions({ projectId, hypothesis, qc }: { projectId: string; h
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['project', projectId] }); toast.success('状态已更新') },
   })
   return (
-    <select value={hypothesis.status} onChange={e => mut.mutate(e.target.value)} className="rounded border px-2 py-0.5 text-xs">
-      <option value="proposed">待验证</option>
-      <option value="testing">验证中</option>
-      <option value="confirmed">已确认</option>
-      <option value="rejected">已否定</option>
-    </select>
+    <Select
+      value={hypothesis.status}
+      onChange={(value) => mut.mutate(value)}
+      ariaLabel="假设状态"
+      size="sm"
+      className="w-28"
+      options={[
+        { value: 'proposed', label: '待验证' },
+        { value: 'testing', label: '验证中' },
+        { value: 'confirmed', label: '已确认' },
+        { value: 'rejected', label: '已否定' },
+      ]}
+    />
   )
 }
 
@@ -200,7 +209,7 @@ function ExperimentForm({ projectId, qc }: { projectId: string; qc: ReturnType<t
   return (
     <div className="flex gap-2 items-center">
       <input value={design} onChange={e => setDesign(e.target.value)} placeholder="实验描述..." className="flex-1 rounded-xl border px-4 py-2 text-sm" />
-      <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={failed} onChange={e => setFailed(e.target.checked)} />失败</label>
+      <Checkbox checked={failed} onChange={setFailed} label="失败" />
       <button onClick={() => mut.mutate()} disabled={!design.trim()} className="rounded-xl bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-40">记录</button>
     </div>
   )
@@ -215,9 +224,19 @@ function RiskForm({ projectId, qc }: { projectId: string; qc: ReturnType<typeof 
   return (
     <div className="flex gap-2">
       <input value={desc} onChange={e => setDesc(e.target.value)} placeholder="新风险..." className="flex-1 rounded-xl border px-4 py-2 text-sm" />
-      <select value={impact} onChange={e => setImpact(e.target.value)} className="rounded-xl border px-3 py-2 text-sm">
-        <option value="low">低</option><option value="medium">中</option><option value="high">高</option><option value="critical">严重</option>
-      </select>
+      <Select
+        value={impact}
+        onChange={setImpact}
+        ariaLabel="风险影响"
+        size="sm"
+        className="w-24"
+        options={[
+          { value: 'low', label: '低' },
+          { value: 'medium', label: '中' },
+          { value: 'high', label: '高' },
+          { value: 'critical', label: '严重' },
+        ]}
+      />
       <button onClick={() => mut.mutate()} disabled={!desc.trim()} className="rounded-xl bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-40">添加</button>
     </div>
   )

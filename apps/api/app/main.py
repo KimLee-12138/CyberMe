@@ -1,9 +1,11 @@
 """CyberMe OS — FastAPI Application."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from sqlalchemy import text
 
 from app.auth.router import router as auth_router
@@ -23,13 +25,21 @@ from app.evaluation.router import router as evaluation_router
 from app.writeback.router import router as writeback_router
 from app.github_proxy.router import router as github_router
 from app.distill_router import router as distill_router
+from app.rag.router import router as rag_router
+from app.kg.router import router as kg_router
+from app.corpus.router import router as corpus_router
+from app.notes.router import router as notes_router
+from app.integrations.yuketang.router import router as yuketang_router
+from app.integrations.yuketang.service import ykt_service
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    ykt_service.start()
     yield
     # Shutdown
+    await ykt_service.stop()
     await engine.dispose()
 
 
@@ -68,6 +78,11 @@ app.include_router(evaluation_router)
 app.include_router(writeback_router)
 app.include_router(github_router)
 app.include_router(distill_router)
+app.include_router(rag_router)
+app.include_router(kg_router)
+app.include_router(corpus_router)
+app.include_router(notes_router)
+app.include_router(yuketang_router)
 
 
 @app.get("/health/live")
@@ -110,3 +125,35 @@ async def api_status():
         "version": "0.1.0",
         "status": "running",
     }
+
+
+# ── SPA hosting (Capacitor / same-origin Android) ─────────────────────
+# When `apps/web/dist` exists, the API server can also serve the built
+# frontend. This lets Android load http(s)://<host>:8002 directly, so the
+# session cookie is same-origin (no cross-site cookie/CORS problems).
+WEB_DIST = Path(__file__).resolve().parents[3] / "apps" / "web" / "dist"
+
+if WEB_DIST.exists():
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        if full_path.startswith(("api/", "health/", "ws/")):
+            raise HTTPException(status_code=404, detail="Not found")
+        if full_path in {"docs", "redoc", "openapi.json"}:
+            raise HTTPException(status_code=404, detail="Not found")
+
+        root = WEB_DIST.resolve()
+        target = (root / full_path).resolve() if full_path else root
+        try:
+            target.relative_to(root)
+        except ValueError:
+            raise HTTPException(status_code=404, detail="Not found")
+
+        if target.is_file():
+            return FileResponse(target)
+        # Do not turn missing JS/CSS/images into index.html (MIME errors).
+        if full_path.startswith("assets/") or "." in Path(full_path).name:
+            raise HTTPException(status_code=404, detail="Not found")
+        index = root / "index.html"
+        if index.exists():
+            return FileResponse(index)
+        raise HTTPException(status_code=404, detail="Not found")

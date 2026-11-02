@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { listSuites, createSuite, deleteSuite, runEvaluation, listRuns } from '../api/learning'
 import { useTitle } from '../lib/useTitle'
 import { toast } from '../stores/toastStore'
+import { CheckCircle2, FlaskConical, XCircle } from 'lucide-react'
+import { confirm } from '../components/ui/ConfirmDialog'
 import type { EvalRun } from '../api/learning'
 
 export default function EvaluationsPage() {
@@ -73,7 +75,7 @@ export default function EvaluationsPage() {
       <div className="space-y-3">
         {suites && suites.suites.length === 0 && (
           <div className="rounded-2xl border bg-white py-12 text-center">
-            <span className="text-3xl">🧪</span>
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef4ff] text-[#2563eb]"><FlaskConical size={22} /></span>
             <p className="mt-3 text-sm text-muted-foreground">暂无评测集，点击「新建评测集」开始</p>
           </div>
         )}
@@ -90,7 +92,10 @@ export default function EvaluationsPage() {
                   className="rounded-lg bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-200 disabled:opacity-50">
                   {running === s.id ? '运行中...' : '▶ 运行'}
                 </button>
-                <button onClick={() => { if (confirm(`确定要删除评测套件「${s.name}」吗？`)) deleteMut.mutate(s.id) }}
+                <button onClick={async () => {
+                  const ok = await confirm({ title: '删除评测套件？', message: `删除「${s.name}」后不可恢复。`, confirmLabel: '删除', danger: true })
+                  if (ok) deleteMut.mutate(s.id)
+                }}
                   className="rounded-lg px-3 py-1 text-xs text-red-500 hover:bg-red-50">删除</button>
               </div>
             </div>
@@ -118,7 +123,7 @@ export default function EvaluationsPage() {
               <div key={i} className={`rounded-lg border-l-4 p-3 ${c.pass ? 'border-l-emerald-500 bg-emerald-50' : 'border-l-red-500 bg-red-50'}`}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">{c.question}</span>
-                  <span className="text-xs">{c.pass ? '✅' : '❌'}</span>
+                  <span className="text-xs">{c.pass ? <CheckCircle2 size={14} className="text-emerald-600" /> : <XCircle size={14} className="text-red-500" />}</span>
                 </div>
                 <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
                   {c.citation_count != null && <span>引用: {c.citation_count}</span>}

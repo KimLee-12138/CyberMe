@@ -17,12 +17,12 @@ async def get_session_token(
     request: Request,
     session: str | None = Cookie(default=None, alias=SESSION_COOKIE),
 ) -> str | None:
-    """Extract session token from cookie or Authorization header."""
-    if session:
-        return session
+    """Extract session token from Authorization header or cookie."""
     auth_header = request.headers.get("Authorization")
     if auth_header and auth_header.startswith("Bearer "):
-        return auth_header[7:]
+        return auth_header[7:].strip()
+    if session:
+        return session
     return None
 
 

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { fetchSelfModel, addStyleSample, removeStyleSample } from '../api/self'
 import { useTitle } from '../lib/useTitle'
 import { toast } from '../stores/toastStore'
+import Select from '../components/ui/Select'
+import { confirm } from '../components/ui/ConfirmDialog'
 
 export default function SelfModelPage() {
   useTitle('个人模型')
@@ -117,11 +119,17 @@ export default function SelfModelPage() {
               placeholder="输入一段你满意的文风示例..."
               rows={3} className="w-full rounded-lg border px-3 py-2 text-sm" />
             <div className="flex items-center gap-2">
-              <select value={styleType} onChange={e => setStyleType(e.target.value as any)}
-                className="rounded-lg border px-2 py-1 text-xs">
-                <option value="approved">✅ 认可</option>
-                <option value="rejected">❌ 不认可</option>
-              </select>
+              <Select
+                value={styleType}
+                onChange={(value) => setStyleType(value as 'approved' | 'rejected')}
+                ariaLabel="风格样本类型"
+                size="sm"
+                className="w-28"
+                options={[
+                  { value: 'approved', label: '认可' },
+                  { value: 'rejected', label: '不认可' },
+                ]}
+              />
               <button onClick={() => addMut.mutate()} disabled={!styleContent.trim()}
                 className="rounded-lg bg-primary px-3 py-1 text-xs text-primary-foreground disabled:opacity-40">保存</button>
               <button onClick={() => setShowAddStyle(false)} className="text-xs text-muted-foreground">取消</button>
@@ -136,10 +144,13 @@ export default function SelfModelPage() {
             {data.style_samples.map((s) => (
               <div key={s.id} className={`flex items-start justify-between rounded-lg px-3 py-2 ${s.sample_type === 'approved' ? 'bg-emerald-50/60' : 'bg-red-50/60'}`}>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-medium">{s.sample_type === 'approved' ? '✅ 认可' : '❌ 不认可'}</span>
+                  <span className="text-xs font-medium">{s.sample_type === 'approved' ? '认可' : '不认可'}</span>
                   <p className="mt-0.5 text-sm line-clamp-2">{s.content}</p>
                 </div>
-                <button onClick={() => { if (window.confirm('确定要删除该风格样本吗？')) delMut.mutate(s.id) }} className="ml-2 shrink-0 text-xs text-red-400 hover:text-red-600">删除</button>
+                <button onClick={async () => {
+                  const ok = await confirm({ title: '删除风格样本？', message: '该样本会从个人模型中移除。', confirmLabel: '删除', danger: true })
+                  if (ok) delMut.mutate(s.id)
+                }} className="ml-2 shrink-0 text-xs text-red-400 hover:text-red-600">删除</button>
               </div>
             ))}
           </div>

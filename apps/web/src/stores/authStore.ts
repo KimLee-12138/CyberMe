@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import * as authApi from '../api/auth'
+import { clearAuthToken, setAuthToken } from '../lib/authToken'
 
 interface User {
   id: string
@@ -28,9 +29,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (session.authenticated && session.user) {
         set({ isAuthenticated: true, user: session.user, isLoading: false })
       } else {
+        clearAuthToken()
         set({ isAuthenticated: false, user: null, isLoading: false })
       }
     } catch {
+      clearAuthToken()
       set({ isAuthenticated: false, user: null, isLoading: false })
     }
   },
@@ -38,6 +41,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (username: string, password: string) => {
     const result = await authApi.login(username, password)
     if (result.status === 'authenticated' && result.user) {
+      setAuthToken(result.session_token)
       set({ isAuthenticated: true, user: result.user, isLoading: false })
       return { status: 'authenticated' }
     }
@@ -47,6 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   verifyTotp: async (tempToken: string, code: string) => {
     const result = await authApi.verifyTotp(tempToken, code)
     if (result.status === 'authenticated' && result.user) {
+      setAuthToken(result.session_token)
       set({ isAuthenticated: true, user: result.user, isLoading: false })
     }
   },
@@ -57,6 +62,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch {
       // Ignore errors on logout
     }
+    clearAuthToken()
     set({ isAuthenticated: false, user: null, isLoading: false })
   },
 }))

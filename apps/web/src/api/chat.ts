@@ -99,3 +99,61 @@ export async function quickAsk(
 ) {
   return api.post<SendMessageResponse>('/ask', { content, mode, scope })
 }
+
+// ── RAG vertical slice ─────────────────────────────────────
+
+export interface RagEvidence {
+  evidence_id: string
+  doc_id: string
+  kind: 'note' | 'source' | string
+  course: string
+  title: string
+  heading: string
+  pages: number[][]
+  source_ids: string[]
+  score: number
+  snippet: string
+}
+
+export interface RagAskResponse {
+  query: string
+  course: string | null
+  answer: string
+  citations: RagEvidence[]
+  evidence: RagEvidence[]
+  refused: boolean
+  degraded?: boolean
+  degraded_reason?: string
+  refusal_reason: string
+  coverage?: number | null
+  model?: string | null
+  usage?: Record<string, number>
+  latency_ms?: number | null
+}
+
+export async function askRag(query: string, course?: string, topK = 8) {
+  return api.post<RagAskResponse>('/rag/ask', {
+    query,
+    course: course || undefined,
+    top_k: topK,
+  })
+}
+
+export interface QuizQuestion {
+  id: string
+  question: string
+  options: string[]
+  answer_index: number
+  explanation: string
+}
+
+export interface QuizResponse {
+  questions: QuizQuestion[]
+  model?: string
+  usage?: Record<string, number>
+  latency_ms?: number
+}
+
+export async function askRagQuiz(query: string, answer: string, count = 3) {
+  return api.post<QuizResponse>('/rag/quiz', { query, answer, count })
+}

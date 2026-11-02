@@ -7,7 +7,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: cyberme
     ports:
-      - "5432:5432"
+      # Loopback only. Host port 15432 avoids the Windows reserved 5432 range.
+      - "127.0.0.1:15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -21,7 +22,8 @@ services:
     image: redis:7-alpine
     container_name: cyberme-redis
     ports:
-      - "6379:6379"
+      # Loopback only; Redis is an internal dependency, not a public service.
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     restart: unless-stopped

@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Download, Printer } from 'lucide-react'
 import Markdown from '../components/ui/Markdown'
+import Select from '../components/ui/Select'
 import { fetchDocument, fetchVersions, resolveWikiLink, updateDocument, searchDocuments } from '../api/knowledge'
 import { masteryLabel, importanceLabel, docStatusLabel, docTypeLabel } from '../lib/enums'
 import { useTitle } from '../lib/useTitle'
@@ -210,15 +212,15 @@ export default function KnowledgeDetailPage() {
                 a.click()
                 URL.revokeObjectURL(url)
               }}
-              className="rounded-lg border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted transition-colors"
+              className="app-button app-button-secondary !min-h-8 !px-3 !text-[11px]"
             >
-              📥 下载 .md
+              <Download size={14} /> 下载 .md
             </button>
             <button
               onClick={() => window.print()}
-              className="rounded-lg border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted transition-colors"
+              className="app-button app-button-secondary !min-h-8 !px-3 !text-[11px]"
             >
-              🖨️ 打印
+              <Printer size={14} /> 打印
             </button>
           </div>
         )}
@@ -262,45 +264,54 @@ export default function KnowledgeDetailPage() {
           <div className="mt-3 flex flex-wrap items-end gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
               掌握度
-              <select
+              <Select
                 value={editMastery}
-                onChange={(e) => setEditMastery(e.target.value)}
-                className="rounded border px-2 py-1 text-sm"
-              >
-                <option value="">-</option>
-                <option value="unknown">未标记</option>
-                <option value="learning">学习中</option>
-                <option value="reviewing">复习中</option>
-                <option value="mastered">已掌握</option>
-              </select>
+                onChange={setEditMastery}
+                ariaLabel="掌握度"
+                size="sm"
+                className="w-28"
+                options={[
+                  { value: '', label: '-' },
+                  { value: 'unknown', label: '未标记' },
+                  { value: 'learning', label: '学习中' },
+                  { value: 'reviewing', label: '复习中' },
+                  { value: 'mastered', label: '已掌握' },
+                ]}
+              />
             </label>
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
               重要度
-              <select
+              <Select
                 value={editImportance}
-                onChange={(e) => setEditImportance(e.target.value)}
-                className="rounded border px-2 py-1 text-sm"
-              >
-                <option value="">-</option>
-                <option value="low">低</option>
-                <option value="medium">中</option>
-                <option value="high">高</option>
-                <option value="critical">紧急</option>
-              </select>
+                onChange={setEditImportance}
+                ariaLabel="重要度"
+                size="sm"
+                className="w-24"
+                options={[
+                  { value: '', label: '-' },
+                  { value: 'low', label: '低' },
+                  { value: 'medium', label: '中' },
+                  { value: 'high', label: '高' },
+                  { value: 'critical', label: '紧急' },
+                ]}
+              />
             </label>
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
               状态
-              <select
+              <Select
                 value={editStatus}
-                onChange={(e) => setEditStatus(e.target.value)}
-                className="rounded border px-2 py-1 text-sm"
-              >
-                <option value="">-</option>
-                <option value="extracted">已提取</option>
-                <option value="cleaned">已清洗</option>
-                <option value="active">活跃</option>
-                <option value="resolved">已解决</option>
-              </select>
+                onChange={setEditStatus}
+                ariaLabel="状态"
+                size="sm"
+                className="w-28"
+                options={[
+                  { value: '', label: '-' },
+                  { value: 'extracted', label: '已提取' },
+                  { value: 'cleaned', label: '已清洗' },
+                  { value: 'active', label: '活跃' },
+                  { value: 'resolved', label: '已解决' },
+                ]}
+              />
             </label>
             <button
               onClick={handleSave}
@@ -358,19 +369,19 @@ export default function KnowledgeDetailPage() {
             <dl className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">类型</dt>
-                <dd className="font-medium">{docTypeLabel(data.document_type) || '-'}</dd>
+                <dd className="font-medium">{docTypeLabel(data.document_type || '') || '-'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">状态</dt>
-                <dd className="font-medium">{docStatusLabel(data.status) || '-'}</dd>
+                <dd className="font-medium">{docStatusLabel(data.status || '') || '-'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">掌握度</dt>
-                <dd className="font-medium">{masteryLabel(data.mastery) || '-'}</dd>
+                <dd className="font-medium">{masteryLabel(data.mastery || '') || '-'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">重要度</dt>
-                <dd className="font-medium">{importanceLabel(data.importance) || '-'}</dd>
+                <dd className="font-medium">{importanceLabel(data.importance || '') || '-'}</dd>
               </div>
             </dl>
           </div>

@@ -22,7 +22,7 @@ export interface GitHubHealth {
 }
 
 export async function fetchRepos(page = 1): Promise<{ repos: GitHubRepo[] }> {
-  return api.get('/github/repos', { params: { page, per_page: 50 } })
+  return api.get('/github/repos', { params: { page: String(page), per_page: '50' } })
 }
 
 export async function saveRepoNote(repoFullName: string, note: string): Promise<{ status: string }> {

@@ -1,43 +1,51 @@
+import type { LucideIcon } from 'lucide-react'
 import {
-  House,
-  ChatCircleText,
-  BookOpenText,
-  ArrowsCounterClockwise,
+  Home,
+  MessageCircle,
+  BookOpen,
+  BookOpenCheck,
+  FlaskConical,
+  RotateCcw,
   GraduationCap,
-  Graph,
-  RocketLaunch,
-  PenNib,
-  Scales,
+  Network,
+  Rocket,
+  PenLine,
+  Scale,
   User,
-  ChartBar,
-  ArrowsClockwise,
-  Gear,
+  BarChart3,
+  RefreshCw,
+  Settings,
   List,
   Brain,
   X,
-  MagnifyingGlass,
-  SignOut,
-} from '@phosphor-icons/react'
+  Search,
+  LogOut,
+  CheckCircle2,
+} from 'lucide-react'
 
-const icons = {
-  house: House,
-  chat: ChatCircleText,
-  learn: BookOpenText,
-  review: ArrowsCounterClockwise,
+const icons: Record<string, LucideIcon> = {
+  house: Home,
+  chat: MessageCircle,
+  learn: BookOpen,
+  review: RotateCcw,
   courses: GraduationCap,
-  graph: Graph,
-  projects: RocketLaunch,
-  write: PenNib,
-  decisions: Scales,
+  notes: BookOpen,
+  yuketang: BookOpenCheck,
+  graph: Network,
+  projects: Rocket,
+  write: PenLine,
+  decisions: Scale,
   self: User,
-  evaluations: ChartBar,
-  sync: ArrowsClockwise,
-  settings: Gear,
+  evaluations: BarChart3,
+  distill: FlaskConical,
+  sync: RefreshCw,
+  settings: Settings,
   list: List,
   brain: Brain,
   x: X,
-  search: MagnifyingGlass,
-  logout: SignOut,
+  search: Search,
+  logout: LogOut,
+  quality: CheckCircle2,
 } as const
 
 type IconName = keyof typeof icons
@@ -49,7 +57,7 @@ interface Props {
   className?: string
 }
 
-export default function Icon({ name, size = 20, weight = 'regular', className }: Props) {
-  const Component = icons[name]
-  return <Component size={size} weight={weight} className={className} />
+export default function Icon({ name, size = 20, className }: Props) {
+  const Component = icons[name] || Search
+  return <Component size={size} strokeWidth={1.8} className={className} />
 }

@@ -1,16 +1,17 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { BarChart3, BriefcaseBusiness, FileText, PenLine, Presentation } from 'lucide-react'
 import { generateWriting, auditWriting } from '../api/learning'
 import { useTitle } from '../lib/useTitle'
 import { toast } from '../stores/toastStore'
 import type { AuditParagraph } from '../api/learning'
 
 const OUTPUT_TYPES = [
-  { key: 'report', label: '实验报告', icon: '📊' },
-  { key: 'summary', label: '学习总结', icon: '📝' },
-  { key: 'essay', label: '课程论文', icon: '📄' },
-  { key: 'presentation', label: 'PPT 大纲', icon: '📽️' },
-  { key: 'resume', label: '简历描述', icon: '💼' },
+  { key: 'report', label: '实验报告', icon: BarChart3 },
+  { key: 'summary', label: '学习总结', icon: PenLine },
+  { key: 'essay', label: '课程论文', icon: FileText },
+  { key: 'presentation', label: 'PPT 大纲', icon: Presentation },
+  { key: 'resume', label: '简历描述', icon: BriefcaseBusiness },
 ]
 
 const FACT_COLORS: Record<string, string> = {
@@ -64,7 +65,7 @@ export default function WritingPage() {
                   className={`flex flex-col items-center rounded-lg p-2 text-xs transition-colors ${
                     outputType === t.key ? 'bg-primary/10 text-primary font-medium' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'
                   }`}>
-                  <span className="text-lg">{t.icon}</span>
+                  <t.icon size={16} />
                   {t.label}
                 </button>
               ))}
@@ -107,7 +108,7 @@ export default function WritingPage() {
           {OUTPUT_TYPES.map((t) => (
             <button key={t.key} onClick={() => setOutputType(t.key)}
               className={`rounded-full px-3 py-1 text-xs ${outputType === t.key ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'}`}>
-              {t.icon} {t.label}
+              <t.icon size={12} /> {t.label}
             </button>
           ))}
           <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="主题..." className="flex-1 rounded-full border px-3 py-1 text-xs" />

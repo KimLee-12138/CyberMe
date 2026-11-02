@@ -171,3 +171,85 @@ export async function fetchNeighborhood(
 ): Promise<NeighborhoodData> {
   return api.get(`/graph/neighborhood/${nodeId}`, { params: { depth: String(depth) } })
 }
+
+// ── Knowledge graph v1 (data/kg/kg.json) ───────────────
+
+export interface KgNode {
+  id: string
+  node_type: 'course' | 'section' | 'topic' | 'source' | string
+  label: string
+  document_id: string | null
+  properties: Record<string, any>
+}
+
+export interface KgEdge {
+  id: string
+  source: string
+  target: string
+  edge_type: string
+  origin: string
+  confidence: number | null
+}
+
+export interface KgGraphData {
+  nodes: KgNode[]
+  edges: KgEdge[]
+  candidate_edges: KgEdge[]
+  course: string | null
+  course_names: Record<string, string>
+  course_prerequisites: Record<string, string[]>
+  stats: {
+    nodes: number
+    edges: number
+    candidate_edges: number
+    total_nodes: number
+    total_edges: number
+  }
+}
+
+export interface KgNodeDetail {
+  node: KgNode
+  neighbors: KgNode[]
+  edges: KgEdge[]
+  candidate_edges: KgEdge[]
+  neighbor_count: number
+}
+
+export async function fetchKgGraph(course?: string, includeCandidates = false): Promise<KgGraphData> {
+  return api.get('/kg/graph', {
+    params: {
+      course: course || undefined,
+      include_candidates: includeCandidates ? 'true' : undefined,
+    },
+  })
+}
+
+export async function fetchKgNode(nodeId: string): Promise<KgNodeDetail> {
+  return api.get(`/kg/node/${encodeURIComponent(nodeId)}`)
+}
+
+export interface KgValidation {
+  ok: boolean
+  counts: Record<string, number>
+  orphan_nodes: KgNode[]
+  orphan_courses_without_content: string[]
+  duplicate_label_groups: Array<{ node_type: string; label: string; count: number; ids: string[] }>
+  missing_note_path: string[]
+  missing_pages: string[]
+  course_prerequisite_cycles: string[][]
+  dangling_edges: KgEdge[]
+  self_loops: KgEdge[]
+}
+
+export async function fetchKgValidate(): Promise<KgValidation> {
+  return api.get('/kg/validate')
+}
+
+
+export async function fetchKgCourses(): Promise<{
+  courses: KgNode[]
+  course_prerequisites: Record<string, string[]>
+  total: number
+}> {
+  return api.get('/kg/courses')
+}

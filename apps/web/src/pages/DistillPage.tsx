@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useTitle } from '../lib/useTitle'
+import Select from '../components/ui/Select'
 import { toast } from '../stores/toastStore'
 
 const COURSE_LIST = 'ALGO,ASM,CALCULUS,CO,CPP,DANGXIAO,DB,DISCRETE,DS,EDA,ENGLISH,HISTORY,INFO,JAVA,JUNLI,LINALG,MAOGAI,MAYUAN,PHYSICS,PROB,PY,RLMATH,SE,SIXIANG,XIGAI,ZHENGCE'.split(',')
@@ -92,17 +93,25 @@ export default function DistillPage() {
       <div className="flex items-end gap-4 rounded-xl border border-border bg-card p-4">
         <label className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">课程</span>
-          <select value={course} onChange={(e) => setCourse(e.target.value)} className="rounded-lg border px-3 py-2 text-sm">
-            {COURSE_LIST.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <Select
+            value={course}
+            onChange={setCourse}
+            options={COURSE_LIST.map((c) => ({ value: c, label: c }))}
+            ariaLabel="选择课程"
+            className="w-52"
+          />
         </label>
 
         {/* Single mode */}
         <label className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">篇数</span>
-          <select value={maxExtracts} onChange={(e) => setMaxExtracts(Number(e.target.value))} className="rounded-lg border px-3 py-2 text-sm">
-            {[1,2,3,5].map((n) => <option key={n} value={n}>{n} 篇</option>)}
-          </select>
+          <Select
+            value={String(maxExtracts)}
+            onChange={(value) => setMaxExtracts(Number(value))}
+            options={[1, 2, 3, 5].map((n) => ({ value: String(n), label: `${n} 篇` }))}
+            ariaLabel="选择篇数"
+            className="w-28"
+          />
         </label>
         <button onClick={() => singleMut.mutate()} disabled={singleMut.isPending || batch.running}
           className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
@@ -112,7 +121,7 @@ export default function DistillPage() {
         {/* Batch button */}
         <button onClick={startBatch} disabled={batch.running || singleMut.isPending}
           className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors">
-          {batch.running ? `蒸馏中 ${pct}%` : '🚀 一键蒸馏整门课'}
+          {batch.running ? `蒸馏中 ${pct}%` : '一键蒸馏整门课'}
         </button>
       </div>
 
@@ -144,7 +153,7 @@ export default function DistillPage() {
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex gap-6 text-sm">
             <span>📄 提取资料：<strong>{pending.extract_count}</strong> 篇</span>
-            <span>📝 已有知识点：<strong>{pending.concept_count}</strong> 篇</span>
+            <span>已有知识点：<strong>{pending.concept_count}</strong> 篇</span>
           </div>
         </div>
       )}

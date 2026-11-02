@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'CyberMe OS — 个人学习操作系统',
         short_name: 'CyberMe',
         description: '围绕个人长期学习建立的认知操作系统',
-        theme_color: '#2563eb',
-        background_color: '#ffffff',
+        theme_color: '#071A33',
+        background_color: '#F5F7FB',
         display: 'standalone',
         orientation: 'any',
         start_url: '/',
@@ -77,19 +77,31 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
   },
+  build: {
+    // Android 10 emulator WebView 74 does not parse optional chaining /
+    // nullish coalescing. Keep the bundle compatible with older WebViews.
+    target: 'es2017',
+  },
   optimizeDeps: {
     include: ['react-force-graph-2d'],
   },
   server: {
     port: 3000,
-    host: '0.0.0.0',
+    // Default to loopback. For phone/Android LAN debugging:
+    //   $env:VITE_DEV_HOST='0.0.0.0'; npm run dev
+    host: process.env.VITE_DEV_HOST || '127.0.0.1',
+    watch: {
+      // The edit tool writes temporary files next to source files; watching
+      // those can crash Vite with EBUSY on Windows.
+      ignored: ['**/.*.tmpdir/**', '**/*.tmp', '**/.*.tmp'],
+    },
     proxy: {
       '/api': {
-        target: 'http://localhost:8002',
+        target: 'http://127.0.0.1:8002',
         changeOrigin: true,
       },
       '/ws': {
-        target: 'ws://localhost:8000',
+        target: 'ws://127.0.0.1:8000',
         ws: true,
       },
     },

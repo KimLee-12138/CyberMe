@@ -8,6 +8,7 @@ import { useTitle } from '../lib/useTitle'
 import { toast } from '../stores/toastStore'
 import LoadingState from '../components/ui/LoadingState'
 import ErrorState from '../components/ui/ErrorState'
+import { confirm } from '../components/ui/ConfirmDialog'
 
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-700',
@@ -199,7 +200,11 @@ export default function ProjectListPage() {
             {p.goal && <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{p.goal}</p>}
             <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
               <span>{p.deadline || '无截止日'}</span>
-              <button onClick={e => { e.stopPropagation(); if (confirm(`确定要删除项目「${p.title}」吗？此操作不可恢复。`)) deleteMut.mutate(p.id) }}
+              <button onClick={async (e) => {
+                e.stopPropagation()
+                const ok = await confirm({ title: '删除项目？', message: `「${p.title}」删除后不可恢复。`, confirmLabel: '删除', danger: true })
+                if (ok) deleteMut.mutate(p.id)
+              }}
                 className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">删除</button>
             </div>
           </div>

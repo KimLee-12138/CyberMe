@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CheckCircle2 } from 'lucide-react'
 import { createPairingCode } from '../api/devices'
 
 export default function PairPage() {
@@ -69,8 +70,8 @@ export default function PairPage() {
           </div>
         ) : (
           <div className="text-center space-y-5">
-            <span className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-2xl">
-              ✅
+            <span className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+              <CheckCircle2 size={30} />
             </span>
             <div>
               <p className="text-sm text-muted-foreground">配对码</p>

@@ -5,6 +5,7 @@ interface LoginResponse {
   user?: { id: string; username: string }
   refresh_token?: string
   temp_token?: string
+  session_token?: string
 }
 
 interface SessionResponse {

@@ -60,6 +60,11 @@ export interface SystemHealth {
   }
   database: 'connected' | 'disconnected'
   redis: 'connected' | 'disconnected'
+  knowledge_graph?: {
+    nodes?: number
+    edges?: number
+    orphaned_nodes?: number
+  }
 }
 
 export interface DashboardData {

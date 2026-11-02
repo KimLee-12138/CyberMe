@@ -58,3 +58,8 @@ htmlcov/
 *.log
 tmp/
 temp/
+
+# Private study corpus, generated docs screenshots and local APKs
+data/
+docs/screenshots/
+*.apk
